@@ -22,12 +22,14 @@ type alias Bits =
 
 type alias Model =
     { key : Bits
+    , input : Bits
     }
 
 
 init : Model
 init =
-    { key = Array.initialize 10 (always 1)
+    { key = Array.fromList [ 0, 1, 1, 1, 1, 1, 1, 1, 0, 1 ]
+    , input = Array.fromList [ 1, 0, 1, 0, 0, 0, 1, 0 ]
     }
 
 
@@ -36,16 +38,23 @@ init =
 
 
 type Msg
-    = Toggle Int
+    = ToggleKey Int
+    | ToggleInput Int
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Toggle index ->
+        ToggleKey index ->
             { model
                 | key =
                     Array.set index (1 - Utils.getIndex model.key index) model.key
+            }
+
+        ToggleInput index ->
+            { model
+                | input =
+                    Array.set index (1 - Utils.getIndex model.input index) model.input
             }
 
 
@@ -76,26 +85,91 @@ view model =
 
         key_p8_2 =
             Boxes.p8 (Array.append key_ls2_1 key_ls2_2)
+
+        input_ip =
+            Boxes.ip model.input
+
+        input_l4_1 =
+            Array.slice 0 4 input_ip
+
+        input_r4_1 =
+            Array.slice 4 8 input_ip
+
+        input_ep =
+            Boxes.ep input_r4_1
+
+        input_xor_1 =
+            Boxes.xor key_p8_1 input_ep
+
+        input_s0_1 =
+            Boxes.s0 (Array.slice 0 4 input_xor_1)
+
+        input_s1_1 =
+            Boxes.s1 (Array.slice 4 8 input_xor_1)
+
+        input_p4_1 =
+            Boxes.p4 (Array.append input_s0_1 input_s1_1)
+
+        input_xor_2 =
+            Array.slice 0 4 (Boxes.xor input_l4_1 input_p4_1)
+
+        input_l4_2 =
+            Array.slice 0 4 input_xor_2
+
+        input_r4_2 =
+            input_r4_1
+
+        input_ep_2 =
+            Boxes.ep input_l4_2
+
+        input_xor_3 =
+            Boxes.xor key_p8_2 input_ep_2
+
+        input_s0_2 =
+            Boxes.s0 (Array.slice 0 4 input_xor_3)
+
+        input_s1_2 =
+            Boxes.s0 (Array.slice 4 8 input_xor_3)
+
+        input_p4_2 =
+            Boxes.p4 (Array.append input_s0_2 input_s1_2)
+
+        input_xor_4 =
+            Array.slice 0 4 (Boxes.xor input_r4_2 input_p4_2)
+
+        input_ip1 =
+            Boxes.ip1 (Array.append input_xor_4 input_l4_2)
     in
     div []
         (List.concat
             [ [ div [] [ text "key" ] ]
-            , List.map (\i -> button [ onClick (Toggle i) ] [ text (String.fromInt (Utils.getIndex model.key i)) ]) (List.range 0 (Array.length model.key - 1))
-            , [ div [] [ text "p10" ]
-              ]
+            , List.map (\i -> button [ onClick (ToggleKey i) ] [ text (String.fromInt (Utils.getIndex model.key i)) ]) (List.range 0 (Array.length model.key - 1))
+            , [ div [] [ text "input" ] ]
+            , List.map (\i -> button [ onClick (ToggleInput i) ] [ text (String.fromInt (Utils.getIndex model.input i)) ]) (List.range 0 (Array.length model.input - 1))
+            , [ div [] [ text "p10" ] ]
             , viewArray key_p10
-            , [ div [] [ text "ls1_1" ]
-              ]
+            , [ div [] [ text "ls1_1" ] ]
             , viewArray key_ls1_1
-            , [ div [] [ text "ls1_2" ]
-              ]
+            , [ div [] [ text "ls1_2" ] ]
             , viewArray key_ls1_2
-            , [ div [] [ text "p8_1" ]
-              ]
+            , [ div [] [ text "p8_1" ] ]
             , viewArray key_p8_1
-            , [ div [] [ text "p8_2" ]
-              ]
+            , [ div [] [ text "p8_2" ] ]
             , viewArray key_p8_2
+            , [ div [] [ text "ip" ] ]
+            , viewArray input_ip
+            , [ div [] [ text "ep" ] ]
+            , viewArray input_ep
+            , [ div [] [ text "xor_1" ] ]
+            , viewArray input_xor_1
+            , [ div [] [ text "s0_1" ] ]
+            , viewArray input_s0_1
+            , [ div [] [ text "s1_1" ] ]
+            , viewArray input_s1_1
+            , [ div [] [ text "xor_2" ] ]
+            , viewArray input_xor_2
+            , [ div [] [ text "cipher" ] ]
+            , viewArray input_ip1
             ]
         )
 
