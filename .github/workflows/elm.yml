@@ -1,0 +1,16 @@
+name: Elm CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    container:
+      image:  codesimple/elm:0.19
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build
+      run: elm make src/Main.elm
