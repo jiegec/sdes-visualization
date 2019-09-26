@@ -3,13 +3,16 @@ module Main exposing (Bits, Model, Msg(..), init, main, update, view)
 import Array
 import Boxes
 import Browser
-import Html exposing (Html, button, div, text)
-import Html.Events exposing (onClick)
+import Css exposing (..)
+import Css.Transitions exposing (easeIn, transition)
+import Html
+import Html.Styled exposing (..)
+import Html.Styled.Events exposing (onClick)
 import Utils
 
 
 main =
-    Browser.sandbox { init = init, update = update, view = view }
+    Browser.sandbox { init = init, update = update, view = view >> toUnstyled }
 
 
 type alias Bits =
@@ -147,33 +150,65 @@ view model =
             , [ div [] [ text "input" ] ]
             , List.map (\i -> button [ onClick (ToggleInput i) ] [ text (String.fromInt (Utils.getIndex model.input i)) ]) (List.range 0 (Array.length model.input - 1))
             , [ div [] [ text "p10" ] ]
-            , viewArray key_p10
+            , [ viewArray key_p10 ]
             , [ div [] [ text "ls1_1" ] ]
-            , viewArray key_ls1_1
+            , [ viewArray key_ls1_1 ]
             , [ div [] [ text "ls1_2" ] ]
-            , viewArray key_ls1_2
+            , [ viewArray key_ls1_2 ]
             , [ div [] [ text "p8_1" ] ]
-            , viewArray key_p8_1
+            , [ viewArray key_p8_1 ]
             , [ div [] [ text "p8_2" ] ]
-            , viewArray key_p8_2
+            , [ viewArray key_p8_2 ]
             , [ div [] [ text "ip" ] ]
-            , viewArray input_ip
+            , [ viewArray input_ip ]
             , [ div [] [ text "ep" ] ]
-            , viewArray input_ep
+            , [ viewArray input_ep ]
             , [ div [] [ text "xor_1" ] ]
-            , viewArray input_xor_1
+            , [ viewArray input_xor_1 ]
             , [ div [] [ text "s0_1" ] ]
-            , viewArray input_s0_1
+            , [ viewArray input_s0_1 ]
             , [ div [] [ text "s1_1" ] ]
-            , viewArray input_s1_1
+            , [ viewArray input_s1_1 ]
             , [ div [] [ text "xor_2" ] ]
-            , viewArray input_xor_2
+            , [ viewArray input_xor_2 ]
             , [ div [] [ text "cipher" ] ]
-            , viewArray input_ip1
+            , [ viewArray input_ip1 ]
             ]
         )
 
 
-viewArray : Array.Array Int -> List (Html Msg)
+bitSize =
+    30
+
+
+viewArray : Array.Array Int -> Html Msg
 viewArray arr =
-    List.map (\i -> button [] [ text (String.fromInt (Utils.getIndex arr i)) ]) (List.range 0 (Array.length arr - 1))
+    styled div
+        [ height (px bitSize) ]
+        []
+        (List.map
+            (\i -> viewBit (Utils.getIndex arr i))
+            (List.range 0 (Array.length arr - 1))
+        )
+
+
+viewBit : Int -> Html Msg
+viewBit bit =
+    styled div
+        [ width (px bitSize), height (px bitSize), display inlineBlock, position relative ]
+        []
+        [ buttonWithOpacity (int (1 - bit)) [] [ text "0" ]
+        , buttonWithOpacity (int bit) [] [ text "1" ]
+        ]
+
+
+buttonWithOpacity o =
+    styled button
+        [ opacity o
+        , position absolute
+        , display inline
+        , left (px 0)
+        , width (px bitSize)
+        , height (px bitSize)
+        , transition [ Css.Transitions.opacity 1000 ]
+        ]
