@@ -7,6 +7,7 @@ import Css exposing (..)
 import Css.Transitions exposing (easeIn, transition)
 import Html
 import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
 import Utils
 
@@ -143,36 +144,11 @@ view model =
         input_ip1 =
             Boxes.ip1 (Array.append input_xor_4 input_l4_2)
     in
-    div []
+    div [ css [ position relative ] ]
         (List.concat
-            [ [ div [] [ text "key" ] ]
-            , List.map (\i -> button [ onClick (ToggleKey i) ] [ text (String.fromInt (Utils.getIndex model.key i)) ]) (List.range 0 (Array.length model.key - 1))
-            , [ div [] [ text "input" ] ]
-            , List.map (\i -> button [ onClick (ToggleInput i) ] [ text (String.fromInt (Utils.getIndex model.input i)) ]) (List.range 0 (Array.length model.input - 1))
-            , [ div [] [ text "p10" ] ]
-            , [ viewArray key_p10 ]
-            , [ div [] [ text "ls1_1" ] ]
-            , [ viewArray key_ls1_1 ]
-            , [ div [] [ text "ls1_2" ] ]
-            , [ viewArray key_ls1_2 ]
-            , [ div [] [ text "p8_1" ] ]
-            , [ viewArray key_p8_1 ]
-            , [ div [] [ text "p8_2" ] ]
-            , [ viewArray key_p8_2 ]
-            , [ div [] [ text "ip" ] ]
-            , [ viewArray input_ip ]
-            , [ div [] [ text "ep" ] ]
-            , [ viewArray input_ep ]
-            , [ div [] [ text "xor_1" ] ]
-            , [ viewArray input_xor_1 ]
-            , [ div [] [ text "s0_1" ] ]
-            , [ viewArray input_s0_1 ]
-            , [ div [] [ text "s1_1" ] ]
-            , [ viewArray input_s1_1 ]
-            , [ div [] [ text "xor_2" ] ]
-            , [ viewArray input_xor_2 ]
-            , [ div [] [ text "cipher" ] ]
-            , [ viewArray input_ip1 ]
+            [ viewKey model
+            , viewInput model
+            , viewCipherText input_ip1
             ]
         )
 
@@ -194,21 +170,54 @@ viewArray arr =
 
 viewBit : Int -> Html Msg
 viewBit bit =
-    styled div
-        [ width (px bitSize), height (px bitSize), display inlineBlock, position relative ]
-        []
+    div
+        [ css [ width (px bitSize), height (px bitSize), display inlineBlock, position relative, paddingLeft (px 3) ] ]
         [ buttonWithOpacity (int (1 - bit)) [] [ text "0" ]
         , buttonWithOpacity (int bit) [] [ text "1" ]
         ]
 
 
 buttonWithOpacity o =
-    styled button
+    styled div
         [ opacity o
         , position absolute
         , display inline
         , left (px 0)
         , width (px bitSize)
         , height (px bitSize)
-        , transition [ Css.Transitions.opacity 1000 ]
+        , lineHeight (px bitSize)
+        , borderWidth (px 1)
+        , borderStyle solid
+        , textAlign center
+        , transition [ Css.Transitions.opacity 1500 ]
         ]
+
+border= [borderWidth (px 1), borderStyle solid, padding (px 5)]
+
+viewKey model =
+    [ div [ css ([ position absolute, left (px 0), top (px 0)] ++ border) ]
+        (List.concat
+            [ [ text "key" ]
+            , List.map (\i -> button [ onClick (ToggleKey i), css [ marginLeft (px 3) ] ] [ text (String.fromInt (Utils.getIndex model.key i)) ]) (List.range 0 (Array.length model.key - 1))
+            ]
+        )
+    ]
+
+
+viewInput model =
+    [ div [ css ([ position absolute, left (px 400), top (px 0)] ++ border) ]
+        (List.concat
+            [ [ text "input" ]
+            , List.map (\i -> button [ onClick (ToggleInput i), css [ marginLeft (px 3) ] ] [ text (String.fromInt (Utils.getIndex model.input i)) ]) (List.range 0 (Array.length model.input - 1))
+            ]
+        )
+    ]
+
+viewCipherText cipher =
+    [ div [ css ([ position absolute, left (px 200), top (px 200)] ++ border) ]
+        (List.concat
+            [ [ text "cipher text" ]
+            , [ viewArray cipher ]
+            ]
+        )
+    ]
