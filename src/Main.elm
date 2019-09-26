@@ -148,14 +148,21 @@ view model =
         (List.concat
             [ viewKey 0 0 model
             , viewInput 600 0 model
-            , viewCipherText 500 300 input_ip1
+            , viewCipherText 500 1500 input_ip1
             , viewP10 0 50 model.key key_p10
             , viewLS1 0 160 (Array.slice 0 5 key_p10) key_ls1_1
-            , viewLS1 200 160 (Array.slice 5 10 key_p10) key_ls1_1
+            , viewLS1 200 160 (Array.slice 5 10 key_p10) key_ls1_2
             , viewP8 0 280 (Array.append key_ls1_1 key_ls1_2) key_p8_1
             , viewLS2 0 400 key_ls1_1 key_ls2_1
             , viewLS2 200 400 key_ls1_2 key_ls2_2
             , viewP8 0 530 (Array.append key_ls2_1 key_ls2_2) key_p8_2
+            , viewIP 600 100 model.input input_ip
+            , viewEP 700 250 input_r4_1 input_ep
+            , viewXor 700 370 input_ep key_p8_1 input_xor_1
+            , viewS0 700 730 (Array.slice 0 4 input_xor_1) input_s0_1
+            , viewS1 880 730 (Array.slice 4 8 input_xor_1) input_s1_1
+            , viewP4 780 850 (Array.append input_s0_1 input_s1_1) input_p4_1
+            , viewXor 750 970 input_p4_1 input_l4_1 input_xor_2
             ]
         )
 
@@ -179,10 +186,30 @@ viewArray arr =
         )
 
 
+viewArrayVert : Array.Array Int -> Html Msg
+viewArrayVert arr =
+    styled div
+        [ width (px bitSize) ]
+        []
+        (List.map
+            (\i -> viewBitVert (Utils.getIndex arr i))
+            (List.range 0 (Array.length arr - 1))
+        )
+
+
 viewBit : Int -> Html Msg
 viewBit bit =
     div
-        [ css ([ display inlineBlock, position relative, paddingLeft (px 3) ] ++ bitStyle) ]
+        [ css ([ display inlineBlock, position relative, marginLeft (px 3), marginRight (px 3) ] ++ bitStyle) ]
+        [ buttonWithOpacity (int (1 - bit)) [] [ text "0" ]
+        , buttonWithOpacity (int bit) [] [ text "1" ]
+        ]
+
+
+viewBitVert : Int -> Html Msg
+viewBitVert bit =
+    div
+        [ css ([ display block, position relative, marginTop (px 3), marginBottom (px 3) ] ++ bitStyle) ]
         [ buttonWithOpacity (int (1 - bit)) [] [ text "0" ]
         , buttonWithOpacity (int bit) [] [ text "1" ]
         ]
@@ -254,12 +281,44 @@ viewLS2 x y =
     viewBox x y "LS-2"
 
 
+viewIP x y =
+    viewBox x y "IP"
+
+
+viewEP x y =
+    viewBox x y "EP"
+
+
+viewS0 x y =
+    viewBox x y "S0"
+
+
+viewS1 x y =
+    viewBox x y "S1"
+
+
+viewP4 x y =
+    viewBox x y "P4"
+
+
 viewBox x y name input output =
     [ div [ css ([ position absolute, left (px x), top (px y), textAlign center ] ++ border) ]
         (List.concat
             [ [ viewArray input ]
             , [ div [ css [ padding (px 5) ] ] [ text name ] ]
             , [ viewArray output ]
+            ]
+        )
+    ]
+
+
+viewXor x y input1 input2 output =
+    [ div [ css ([ position absolute, left (px x), top (px y), textAlign center ] ++ border) ]
+        (List.concat
+            [ [ div [ css [ paddingLeft (px bitSize) ] ] [ viewArray input1 ] ]
+            , [ div [ css [ position absolute, displayFlex, alignItems center, justifyContent center, top (px 0), paddingLeft (px (bitSize / 2)), width (pct 100), height (pct 100), fontSize (px 100) ] ] [ text "⊕" ] ]
+            , [ viewArrayVert input2 ]
+            , [ div [ css [ paddingLeft (px bitSize) ] ] [ viewArray output ] ]
             ]
         )
     ]
