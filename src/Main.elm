@@ -73,7 +73,7 @@ view model =
             Boxes.p10 model.key
 
         key_ls1_1 =
-            Boxes.ls1 key_p10
+            Boxes.ls1 (Array.slice 0 5 key_p10)
 
         key_ls1_2 =
             Boxes.ls1 (Array.slice 5 10 key_p10)
@@ -146,15 +146,26 @@ view model =
     in
     div [ css [ position relative ] ]
         (List.concat
-            [ viewKey model
-            , viewInput model
-            , viewCipherText input_ip1
+            [ viewKey 0 0 model
+            , viewInput 600 0 model
+            , viewCipherText 500 300 input_ip1
+            , viewP10 0 50 model.key key_p10
+            , viewLS1 0 160 (Array.slice 0 5 key_p10) key_ls1_1
+            , viewLS1 200 160 (Array.slice 5 10 key_p10) key_ls1_1
+            , viewP8 0 280 (Array.append key_ls1_1 key_ls1_2) key_p8_1
+            , viewLS2 0 400 key_ls1_1 key_ls2_1
+            , viewLS2 200 400 key_ls1_2 key_ls2_2
+            , viewP8 0 530 (Array.append key_ls2_1 key_ls2_2) key_p8_2
             ]
         )
 
 
 bitSize =
     30
+
+
+bitStyle =
+    [ width (px bitSize), height (px bitSize) ]
 
 
 viewArray : Array.Array Int -> Html Msg
@@ -171,7 +182,7 @@ viewArray arr =
 viewBit : Int -> Html Msg
 viewBit bit =
     div
-        [ css [ width (px bitSize), height (px bitSize), display inlineBlock, position relative, paddingLeft (px 3) ] ]
+        [ css ([ display inlineBlock, position relative, paddingLeft (px 3) ] ++ bitStyle) ]
         [ buttonWithOpacity (int (1 - bit)) [] [ text "0" ]
         , buttonWithOpacity (int bit) [] [ text "1" ]
         ]
@@ -192,32 +203,63 @@ buttonWithOpacity o =
         , transition [ Css.Transitions.opacity 1500 ]
         ]
 
-border= [borderWidth (px 1), borderStyle solid, padding (px 5)]
 
-viewKey model =
-    [ div [ css ([ position absolute, left (px 0), top (px 0)] ++ border) ]
+border =
+    [ borderWidth (px 1), borderStyle solid, padding (px 5) ]
+
+
+viewKey x y model =
+    [ div [ css ([ position absolute, left (px x), top (px y) ] ++ border) ]
         (List.concat
             [ [ text "key" ]
-            , List.map (\i -> button [ onClick (ToggleKey i), css [ marginLeft (px 3) ] ] [ text (String.fromInt (Utils.getIndex model.key i)) ]) (List.range 0 (Array.length model.key - 1))
+            , List.map (\i -> button [ onClick (ToggleKey i), css [ marginLeft (px 3), width (px bitSize), height (px bitSize) ] ] [ text (String.fromInt (Utils.getIndex model.key i)) ]) (List.range 0 (Array.length model.key - 1))
             ]
         )
     ]
 
 
-viewInput model =
-    [ div [ css ([ position absolute, left (px 400), top (px 0)] ++ border) ]
+viewInput x y model =
+    [ div [ css ([ position absolute, left (px x), top (px y) ] ++ border) ]
         (List.concat
             [ [ text "input" ]
-            , List.map (\i -> button [ onClick (ToggleInput i), css [ marginLeft (px 3) ] ] [ text (String.fromInt (Utils.getIndex model.input i)) ]) (List.range 0 (Array.length model.input - 1))
+            , List.map (\i -> button [ onClick (ToggleInput i), css [ marginLeft (px 3), width (px bitSize), height (px bitSize) ] ] [ text (String.fromInt (Utils.getIndex model.input i)) ]) (List.range 0 (Array.length model.input - 1))
             ]
         )
     ]
 
-viewCipherText cipher =
-    [ div [ css ([ position absolute, left (px 200), top (px 200)] ++ border) ]
+
+viewCipherText x y bits =
+    [ div [ css ([ position absolute, left (px x), top (px y) ] ++ border) ]
         (List.concat
             [ [ text "cipher text" ]
-            , [ viewArray cipher ]
+            , [ viewArray bits ]
+            ]
+        )
+    ]
+
+
+viewP10 x y =
+    viewBox x y "P10"
+
+
+viewP8 x y =
+    viewBox x y "P8"
+
+
+viewLS1 x y =
+    viewBox x y "LS-1"
+
+
+viewLS2 x y =
+    viewBox x y "LS-2"
+
+
+viewBox x y name input output =
+    [ div [ css ([ position absolute, left (px x), top (px y), textAlign center ] ++ border) ]
+        (List.concat
+            [ [ viewArray input ]
+            , [ div [ css [ padding (px 5) ] ] [ text name ] ]
+            , [ viewArray output ]
             ]
         )
     ]
