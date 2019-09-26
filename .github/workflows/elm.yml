@@ -12,11 +12,12 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
-    - name: Build and Deploy
-      uses: JamesIves/github-pages-deploy-action@master
+    - name: Build
+      run: elm make src/Main.elm --output=build/index.html
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@2.0.2
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         BASE_BRANCH: master
         BRANCH: gh-pages
         FOLDER: build
-        BUILD_SCRIPT: elm make src/Main.elm --output=build/index.html
