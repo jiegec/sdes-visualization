@@ -47,10 +47,6 @@ type Msg
 
 update : Msg -> Model -> Model
 update msg model =
-    let
-        _ =
-            Debug.log "model" model
-    in
     case msg of
         ToggleKey index ->
             { model
