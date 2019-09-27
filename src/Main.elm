@@ -24,6 +24,7 @@ main =
 type alias Model =
     { key : Bits
     , input : Bits
+    , currentHighlight : String
     }
 
 
@@ -31,6 +32,7 @@ init : Model
 init =
     { key = Array.fromList [ Input 0 "key9", Input 1 "key8", Input 1 "key7", Input 1 "key6", Input 1 "key5", Input 1 "key4", Input 1 "key1", Input 1 "key0", Input 0 "key1", Input 1 "key0" ]
     , input = Array.fromList [ Input 1 "input7", Input 0 "input6", Input 1 "input5", Input 0 "input4", Input 0 "input3", Input 0 "input2", Input 1 "input1", Input 0 "input0" ]
+    , currentHighlight = "None"
     }
 
 
@@ -45,17 +47,23 @@ type Msg
 
 update : Msg -> Model -> Model
 update msg model =
+    let
+        _ =
+            Debug.log "model" model
+    in
     case msg of
         ToggleKey index ->
             { model
                 | key =
                     Array.set index (Utils.invertInput (Utils.getRawIndex model.key index)) model.key
+                , currentHighlight = Utils.bitId (Utils.getRawIndex model.key index)
             }
 
         ToggleInput index ->
             { model
                 | input =
                     Array.set index (Utils.invertInput (Utils.getRawIndex model.input index)) model.input
+                , currentHighlight = Utils.bitId (Utils.getRawIndex model.input index)
             }
 
 
@@ -145,28 +153,28 @@ view model =
         (List.concat
             [ viewKey 0 0 model
             , viewInput 600 0 model
-            , viewP10 0 50 model.key key_p10
-            , viewLS1 0 160 (Array.slice 0 5 key_p10) key_ls1_1
-            , viewLS1 200 160 (Array.slice 5 10 key_p10) key_ls1_2
-            , viewP8 0 280 (Array.append key_ls1_1 key_ls1_2) key_p8_1
-            , viewLS2 0 400 key_ls1_1 key_ls2_1
-            , viewLS2 200 400 key_ls1_2 key_ls2_2
-            , viewP8 0 530 (Array.append key_ls2_1 key_ls2_2) key_p8_2
-            , viewIP 600 60 model.input input_ip
-            , viewEP 700 180 input_r4_1 input_ep
-            , viewXor 700 290 input_ep key_p8_1 input_xor_1
-            , viewS0 700 660 (Array.slice 0 4 input_xor_1) input_s0_1
-            , viewS1 880 660 (Array.slice 4 8 input_xor_1) input_s1_1
-            , viewP4 780 780 (Array.append input_s0_1 input_s1_1) input_p4_1
-            , viewXor 750 910 input_p4_1 input_l4_1 input_xor_2
-            , viewEP 700 1150 input_l4_2 input_ep_2
-            , viewXor 700 1260 input_ep_2 key_p8_2 input_xor_3
-            , viewS0 700 1630 (Array.slice 0 4 input_xor_3) input_s0_2
-            , viewS1 880 1630 (Array.slice 4 8 input_xor_3) input_s1_2
-            , viewP4 800 1750 (Array.append input_s0_2 input_s1_2) input_p4_2
-            , viewXor 750 1900 input_p4_2 input_r4_2 input_xor_4
-            , viewIP1 750 2150 (Array.append input_xor_4 input_l4_2) input_ip1
-            , viewCipherText 500 2300 input_ip1
+            , viewP10 0 50 model.key key_p10 model
+            , viewLS1 0 160 (Array.slice 0 5 key_p10) key_ls1_1 model
+            , viewLS1 200 160 (Array.slice 5 10 key_p10) key_ls1_2 model
+            , viewP8 0 280 (Array.append key_ls1_1 key_ls1_2) key_p8_1 model
+            , viewLS2 0 400 key_ls1_1 key_ls2_1 model
+            , viewLS2 200 400 key_ls1_2 key_ls2_2 model
+            , viewP8 0 530 (Array.append key_ls2_1 key_ls2_2) key_p8_2 model
+            , viewIP 600 60 model.input input_ip model
+            , viewEP 700 180 input_r4_1 input_ep model
+            , viewXor 700 290 input_ep key_p8_1 input_xor_1 model
+            , viewS0 700 660 (Array.slice 0 4 input_xor_1) input_s0_1 model
+            , viewS1 880 660 (Array.slice 4 8 input_xor_1) input_s1_1 model
+            , viewP4 780 780 (Array.append input_s0_1 input_s1_1) input_p4_1 model
+            , viewXor 750 910 input_p4_1 input_l4_1 input_xor_2 model
+            , viewEP 700 1150 input_l4_2 input_ep_2 model
+            , viewXor 700 1260 input_ep_2 key_p8_2 input_xor_3 model
+            , viewS0 700 1630 (Array.slice 0 4 input_xor_3) input_s0_2 model
+            , viewS1 880 1630 (Array.slice 4 8 input_xor_3) input_s1_2 model
+            , viewP4 800 1750 (Array.append input_s0_2 input_s1_2) input_p4_2 model
+            , viewXor 750 1900 input_p4_2 input_r4_2 input_xor_4 model
+            , viewIP1 750 2150 (Array.append input_xor_4 input_l4_2) input_ip1 model
+            , viewCipherText 500 2300 input_ip1 model
             ]
         )
 
@@ -179,55 +187,56 @@ bitStyle =
     [ width (px bitSize), height (px bitSize) ]
 
 
-viewArray : Bits -> Html Msg
-viewArray arr =
+viewArray : Bits -> Model -> Html Msg
+viewArray arr model =
     styled div
         [ height (px bitSize) ]
         []
         (List.map
-            (\i -> viewBit (Utils.getIndex arr i))
+            (\i -> viewBit (Utils.getIndex arr i) model)
             (List.range 0 (Array.length arr - 1))
         )
 
 
-viewArrayVert : Bits -> Html Msg
-viewArrayVert arr =
+viewArrayVert : Bits -> Model -> Html Msg
+viewArrayVert arr model =
     styled div
         [ width (px bitSize) ]
         []
         (List.map
-            (\i -> viewBitVert (Utils.getIndex arr i))
+            (\i -> viewBitVert (Utils.getIndex arr i) model)
             (List.range 0 (Array.length arr - 1))
         )
 
 
-viewBit : Bit -> Html Msg
-viewBit bit =
+viewBitInner bit model extraCss =
     let
         value =
             Utils.bitValue bit
 
         depend =
             Utils.getDepend bit
+
+        highlightStyle =
+            if List.any (\b -> Utils.bitId b == model.currentHighlight) depend then
+                [ color (rgb 255 0 0) ]
+
+            else
+                []
     in
     div
-        [ css ([ display inlineBlock, position relative, marginLeft (px 3), marginRight (px 3) ] ++ bitStyle) ]
+        [ css ([ display inlineBlock, position relative, marginLeft (px 3), marginRight (px 3) ] ++ extraCss ++ bitStyle ++ highlightStyle) ]
         [ buttonWithOpacity (int (1 - value)) [] [ text "0" ]
         , buttonWithOpacity (int value) [] [ text "1" ]
         ]
 
 
-viewBitVert : Bit -> Html Msg
-viewBitVert bit =
-    let
-        value =
-            Utils.bitValue bit
-    in
-    div
-        [ css ([ display block, position relative, marginTop (px 3), marginBottom (px 3) ] ++ bitStyle) ]
-        [ buttonWithOpacity (int (1 - value)) [] [ text "0" ]
-        , buttonWithOpacity (int value) [] [ text "1" ]
-        ]
+viewBit bit model =
+    viewBitInner bit model [ marginLeft (px 3), marginRight (px 3) ]
+
+
+viewBitVert bit model =
+    viewBitInner bit model [ marginTop (px 3), marginBottom (px 3) ]
 
 
 buttonWithOpacity o =
@@ -242,7 +251,7 @@ buttonWithOpacity o =
         , borderWidth (px 1)
         , borderStyle solid
         , textAlign center
-        , transition [ Css.Transitions.opacity 1500 ]
+        , transition [ Css.Transitions.opacity 1000, Css.Transitions.color 1000 ]
         ]
 
 
@@ -270,11 +279,11 @@ viewInput x y model =
     ]
 
 
-viewCipherText x y bits =
+viewCipherText x y bits model =
     [ div [ css ([ position absolute, left (px x), top (px y) ] ++ border) ]
         (List.concat
             [ [ text "cipher text" ]
-            , [ viewArray bits ]
+            , [ viewArray bits model ]
             ]
         )
     ]
@@ -320,24 +329,24 @@ viewP4 x y =
     viewBox x y "P4"
 
 
-viewBox x y name input output =
+viewBox x y name input output model =
     [ div [ css ([ position absolute, left (px x), top (px y), textAlign center ] ++ border) ]
         (List.concat
-            [ [ viewArray input ]
+            [ [ viewArray input model ]
             , [ div [ css [ padding (px 5) ] ] [ text name ] ]
-            , [ viewArray output ]
+            , [ viewArray output model ]
             ]
         )
     ]
 
 
-viewXor x y input1 input2 output =
+viewXor x y input1 input2 output model =
     [ div [ css ([ position absolute, left (px x), top (px y), textAlign center ] ++ border) ]
         (List.concat
-            [ [ div [ css [ paddingLeft (px bitSize) ] ] [ viewArray input1 ] ]
+            [ [ div [ css [ paddingLeft (px bitSize) ] ] [ viewArray input1 model ] ]
             , [ div [ css [ position absolute, displayFlex, alignItems center, justifyContent center, top (px 0), paddingLeft (px (bitSize / 2)), width (pct 100), height (pct 100), fontSize (px 100) ] ] [ text "⊕" ] ]
-            , [ viewArrayVert input2 ]
-            , [ div [ css [ paddingLeft (px bitSize) ] ] [ viewArray output ] ]
+            , [ viewArrayVert input2 model ]
+            , [ div [ css [ paddingLeft (px bitSize) ] ] [ viewArray output model ] ]
             ]
         )
     ]

@@ -58,3 +58,12 @@ invertInput bit =
 
         Calculated _ depend ->
             Input 0 "None"
+
+
+bitId bit =
+    case bit of
+        Input data id ->
+            id
+
+        Calculated data _ ->
+            "None"
