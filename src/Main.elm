@@ -163,14 +163,14 @@ view model =
             , viewIP 600 60 model.input input_ip model
             , viewEP 700 180 input_r4_1 input_ep model
             , viewXor 700 290 input_ep key_p8_1 input_xor_1 model
-            , viewS0 700 660 (Array.slice 0 4 input_xor_1) input_s0_1 model
-            , viewS1 880 660 (Array.slice 4 8 input_xor_1) input_s1_1 model
+            , viewS0 700 680 (Array.slice 0 4 input_xor_1) input_s0_1 model
+            , viewS1 880 680 (Array.slice 4 8 input_xor_1) input_s1_1 model
             , viewP4 780 780 (Array.append input_s0_1 input_s1_1) input_p4_1 model
             , viewXor 750 910 input_p4_1 input_l4_1 input_xor_2 model
             , viewEP 700 1150 input_l4_2 input_ep_2 model
             , viewXor 700 1260 input_ep_2 key_p8_2 input_xor_3 model
-            , viewS0 700 1630 (Array.slice 0 4 input_xor_3) input_s0_2 model
-            , viewS1 880 1630 (Array.slice 4 8 input_xor_3) input_s1_2 model
+            , viewS0 700 1650 (Array.slice 0 4 input_xor_3) input_s0_2 model
+            , viewS1 880 1650 (Array.slice 4 8 input_xor_3) input_s1_2 model
             , viewP4 800 1750 (Array.append input_s0_2 input_s1_2) input_p4_2 model
             , viewXor 750 1900 input_p4_2 input_r4_2 input_xor_4 model
             , viewIP1 750 2150 (Array.append input_xor_4 input_l4_2) input_ip1 model
@@ -225,7 +225,7 @@ viewBitInner bit model extraCss =
                 []
     in
     div
-        [ css ([ display inlineBlock, position relative, marginLeft (px 3), marginRight (px 3) ] ++ extraCss ++ bitStyle ++ highlightStyle) ]
+        [ css ([ display inlineBlock, position relative ] ++ extraCss ++ bitStyle ++ highlightStyle) ]
         [ buttonWithOpacity (int (1 - value)) [] [ text "0" ]
         , buttonWithOpacity (int value) [] [ text "1" ]
         ]
