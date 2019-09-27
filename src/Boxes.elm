@@ -2,10 +2,11 @@ module Boxes exposing (..)
 
 import Array
 import Bitwise
+import Types exposing (..)
 import Utils
 
 
-p10 : Array.Array Int -> Array.Array Int
+p10 : Bits -> Bits
 p10 arr =
     Array.fromList
         [ Utils.getIndex arr 2
@@ -21,7 +22,7 @@ p10 arr =
         ]
 
 
-p8 : Array.Array Int -> Array.Array Int
+p8 : Bits -> Bits
 p8 arr =
     Array.fromList
         [ Utils.getIndex arr 5
@@ -35,7 +36,7 @@ p8 arr =
         ]
 
 
-ls1 : Array.Array Int -> Array.Array Int
+ls1 : Bits -> Bits
 ls1 arr =
     Array.fromList
         [ Utils.getIndex arr 1
@@ -46,7 +47,7 @@ ls1 arr =
         ]
 
 
-ls2 : Array.Array Int -> Array.Array Int
+ls2 : Bits -> Bits
 ls2 arr =
     Array.fromList
         [ Utils.getIndex arr 2
@@ -57,7 +58,7 @@ ls2 arr =
         ]
 
 
-ip : Array.Array Int -> Array.Array Int
+ip : Bits -> Bits
 ip arr =
     Array.fromList
         [ Utils.getIndex arr 1
@@ -71,7 +72,7 @@ ip arr =
         ]
 
 
-ep : Array.Array Int -> Array.Array Int
+ep : Bits -> Bits
 ep arr =
     Array.fromList
         [ Utils.getIndex arr 3
@@ -85,73 +86,77 @@ ep arr =
         ]
 
 
-xor : Array.Array Int -> Array.Array Int -> Array.Array Int
+xor : Bits -> Bits -> Bits
 xor arr1 arr2 =
     Array.fromList
-        [ Bitwise.xor (Utils.getIndex arr1 0) (Utils.getIndex arr2 0)
-        , Bitwise.xor (Utils.getIndex arr1 1) (Utils.getIndex arr2 1)
-        , Bitwise.xor (Utils.getIndex arr1 2) (Utils.getIndex arr2 2)
-        , Bitwise.xor (Utils.getIndex arr1 3) (Utils.getIndex arr2 3)
-        , Bitwise.xor (Utils.getIndex arr1 4) (Utils.getIndex arr2 4)
-        , Bitwise.xor (Utils.getIndex arr1 5) (Utils.getIndex arr2 5)
-        , Bitwise.xor (Utils.getIndex arr1 6) (Utils.getIndex arr2 6)
-        , Bitwise.xor (Utils.getIndex arr1 7) (Utils.getIndex arr2 7)
+        [ Utils.xorBit (Utils.getIndex arr1 0) (Utils.getIndex arr2 0)
+        , Utils.xorBit (Utils.getIndex arr1 1) (Utils.getIndex arr2 1)
+        , Utils.xorBit (Utils.getIndex arr1 2) (Utils.getIndex arr2 2)
+        , Utils.xorBit (Utils.getIndex arr1 3) (Utils.getIndex arr2 3)
+        , Utils.xorBit (Utils.getIndex arr1 4) (Utils.getIndex arr2 4)
+        , Utils.xorBit (Utils.getIndex arr1 5) (Utils.getIndex arr2 5)
+        , Utils.xorBit (Utils.getIndex arr1 6) (Utils.getIndex arr2 6)
+        , Utils.xorBit (Utils.getIndex arr1 7) (Utils.getIndex arr2 7)
         ]
 
 
-s0 : Array.Array Int -> Array.Array Int
+s0 : Bits -> Bits
 s0 arr =
-    Maybe.withDefault (Array.fromList [ 0, 0 ])
-        (Array.get (Utils.getIndex arr 0 * 8 + Utils.getIndex arr 3 * 4 + Utils.getIndex arr 1 * 2 + Utils.getIndex arr 2)
-            (Array.fromList
-                [ Array.fromList [ 1, 0 ]
-                , Array.fromList [ 0, 0 ]
-                , Array.fromList [ 1, 1 ]
-                , Array.fromList [ 1, 0 ]
-                , Array.fromList [ 1, 1 ]
-                , Array.fromList [ 1, 0 ]
-                , Array.fromList [ 0, 1 ]
-                , Array.fromList [ 0, 0 ]
-                , Array.fromList [ 0, 0 ]
-                , Array.fromList [ 1, 0 ]
-                , Array.fromList [ 0, 1 ]
-                , Array.fromList [ 1, 1 ]
-                , Array.fromList [ 1, 1 ]
-                , Array.fromList [ 0, 1 ]
-                , Array.fromList [ 1, 1 ]
-                , Array.fromList [ 1, 0 ]
-                ]
+    Array.map (\bit -> Calculated bit (List.concat (Array.toList (Array.map Utils.getDepend arr))))
+        (Maybe.withDefault (Array.fromList [ 0, 0 ])
+            (Array.get (Utils.getIndexValue arr 0 * 8 + Utils.getIndexValue arr 3 * 4 + Utils.getIndexValue arr 1 * 2 + Utils.getIndexValue arr 2)
+                (Array.fromList
+                    [ Array.fromList [ 1, 0 ]
+                    , Array.fromList [ 0, 0 ]
+                    , Array.fromList [ 1, 1 ]
+                    , Array.fromList [ 1, 0 ]
+                    , Array.fromList [ 1, 1 ]
+                    , Array.fromList [ 1, 0 ]
+                    , Array.fromList [ 0, 1 ]
+                    , Array.fromList [ 0, 0 ]
+                    , Array.fromList [ 0, 0 ]
+                    , Array.fromList [ 1, 0 ]
+                    , Array.fromList [ 0, 1 ]
+                    , Array.fromList [ 1, 1 ]
+                    , Array.fromList [ 1, 1 ]
+                    , Array.fromList [ 0, 1 ]
+                    , Array.fromList [ 1, 1 ]
+                    , Array.fromList [ 1, 0 ]
+                    ]
+                )
             )
         )
 
 
-s1 : Array.Array Int -> Array.Array Int
+s1 : Bits -> Bits
 s1 arr =
-    Maybe.withDefault (Array.fromList [ 0, 0 ])
-        (Array.get (Utils.getIndex arr 0 * 8 + Utils.getIndex arr 3 * 4 + Utils.getIndex arr 1 * 2 + Utils.getIndex arr 2)
-            (Array.fromList
-                [ Array.fromList [ 0, 0 ]
-                , Array.fromList [ 0, 1 ]
-                , Array.fromList [ 1, 0 ]
-                , Array.fromList [ 1, 1 ]
-                , Array.fromList [ 1, 0 ]
-                , Array.fromList [ 0, 0 ]
-                , Array.fromList [ 0, 1 ]
-                , Array.fromList [ 1, 1 ]
-                , Array.fromList [ 1, 1 ]
-                , Array.fromList [ 0, 0 ]
-                , Array.fromList [ 0, 1 ]
-                , Array.fromList [ 0, 0 ]
-                , Array.fromList [ 1, 0 ]
-                , Array.fromList [ 0, 1 ]
-                , Array.fromList [ 0, 0 ]
-                , Array.fromList [ 1, 1 ]
-                ]
+    Array.map (\bit -> Calculated bit (List.concat (Array.toList (Array.map Utils.getDepend arr))))
+        (Maybe.withDefault (Array.fromList [ 0, 0 ])
+            (Array.get (Utils.getIndexValue arr 0 * 8 + Utils.getIndexValue arr 3 * 4 + Utils.getIndexValue arr 1 * 2 + Utils.getIndexValue arr 2)
+                (Array.fromList
+                    [ Array.fromList [ 0, 0 ]
+                    , Array.fromList [ 0, 1 ]
+                    , Array.fromList [ 1, 0 ]
+                    , Array.fromList [ 1, 1 ]
+                    , Array.fromList [ 1, 0 ]
+                    , Array.fromList [ 0, 0 ]
+                    , Array.fromList [ 0, 1 ]
+                    , Array.fromList [ 1, 1 ]
+                    , Array.fromList [ 1, 1 ]
+                    , Array.fromList [ 0, 0 ]
+                    , Array.fromList [ 0, 1 ]
+                    , Array.fromList [ 0, 0 ]
+                    , Array.fromList [ 1, 0 ]
+                    , Array.fromList [ 0, 1 ]
+                    , Array.fromList [ 0, 0 ]
+                    , Array.fromList [ 1, 1 ]
+                    ]
+                )
             )
         )
 
 
-p4 : Array.Array Int -> Array.Array Int
+p4 : Bits -> Bits
 p4 arr =
     Array.fromList
         [ Utils.getIndex arr 1
@@ -161,7 +166,7 @@ p4 arr =
         ]
 
 
-ip1 : Array.Array Int -> Array.Array Int
+ip1 : Bits -> Bits
 ip1 arr =
     Array.fromList
         [ Utils.getIndex arr 3

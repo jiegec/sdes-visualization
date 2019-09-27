@@ -1,4 +1,4 @@
-module Main exposing (Bits, Model, Msg(..), init, main, update, view)
+module Main exposing (Model, Msg(..), init, main, update, view)
 
 import Array
 import Boxes
@@ -9,15 +9,12 @@ import Html
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events exposing (onClick)
+import Types exposing (..)
 import Utils
 
 
 main =
     Browser.sandbox { init = init, update = update, view = view >> toUnstyled }
-
-
-type alias Bits =
-    Array.Array Int
 
 
 
@@ -32,8 +29,8 @@ type alias Model =
 
 init : Model
 init =
-    { key = Array.fromList [ 0, 1, 1, 1, 1, 1, 1, 1, 0, 1 ]
-    , input = Array.fromList [ 1, 0, 1, 0, 0, 0, 1, 0 ]
+    { key = Array.fromList [ Input 0 "key9", Input 1 "key8", Input 1 "key7", Input 1 "key6", Input 1 "key5", Input 1 "key4", Input 1 "key1", Input 1 "key0", Input 0 "key1", Input 1 "key0" ]
+    , input = Array.fromList [ Input 1 "input7", Input 0 "input6", Input 1 "input5", Input 0 "input4", Input 0 "input3", Input 0 "input2", Input 1 "input1", Input 0 "input0" ]
     }
 
 
@@ -52,13 +49,13 @@ update msg model =
         ToggleKey index ->
             { model
                 | key =
-                    Array.set index (1 - Utils.getIndex model.key index) model.key
+                    Array.set index (Utils.invertInput (Utils.getRawIndex model.key index)) model.key
             }
 
         ToggleInput index ->
             { model
                 | input =
-                    Array.set index (1 - Utils.getIndex model.input index) model.input
+                    Array.set index (Utils.invertInput (Utils.getRawIndex model.input index)) model.input
             }
 
 
@@ -182,7 +179,7 @@ bitStyle =
     [ width (px bitSize), height (px bitSize) ]
 
 
-viewArray : Array.Array Int -> Html Msg
+viewArray : Bits -> Html Msg
 viewArray arr =
     styled div
         [ height (px bitSize) ]
@@ -193,7 +190,7 @@ viewArray arr =
         )
 
 
-viewArrayVert : Array.Array Int -> Html Msg
+viewArrayVert : Bits -> Html Msg
 viewArrayVert arr =
     styled div
         [ width (px bitSize) ]
@@ -204,21 +201,32 @@ viewArrayVert arr =
         )
 
 
-viewBit : Int -> Html Msg
+viewBit : Bit -> Html Msg
 viewBit bit =
+    let
+        value =
+            Utils.bitValue bit
+
+        depend =
+            Utils.getDepend bit
+    in
     div
         [ css ([ display inlineBlock, position relative, marginLeft (px 3), marginRight (px 3) ] ++ bitStyle) ]
-        [ buttonWithOpacity (int (1 - bit)) [] [ text "0" ]
-        , buttonWithOpacity (int bit) [] [ text "1" ]
+        [ buttonWithOpacity (int (1 - value)) [] [ text "0" ]
+        , buttonWithOpacity (int value) [] [ text "1" ]
         ]
 
 
-viewBitVert : Int -> Html Msg
+viewBitVert : Bit -> Html Msg
 viewBitVert bit =
+    let
+        value =
+            Utils.bitValue bit
+    in
     div
         [ css ([ display block, position relative, marginTop (px 3), marginBottom (px 3) ] ++ bitStyle) ]
-        [ buttonWithOpacity (int (1 - bit)) [] [ text "0" ]
-        , buttonWithOpacity (int bit) [] [ text "1" ]
+        [ buttonWithOpacity (int (1 - value)) [] [ text "0" ]
+        , buttonWithOpacity (int value) [] [ text "1" ]
         ]
 
 
@@ -246,7 +254,7 @@ viewKey x y model =
     [ div [ css ([ position absolute, left (px x), top (px y) ] ++ border) ]
         (List.concat
             [ [ text "key" ]
-            , List.map (\i -> button [ onClick (ToggleKey i), css [ marginLeft (px 3), width (px bitSize), height (px bitSize) ] ] [ text (String.fromInt (Utils.getIndex model.key i)) ]) (List.range 0 (Array.length model.key - 1))
+            , List.map (\i -> button [ onClick (ToggleKey i), css [ marginLeft (px 3), width (px bitSize), height (px bitSize) ] ] [ text (String.fromInt (Utils.getIndexValue model.key i)) ]) (List.range 0 (Array.length model.key - 1))
             ]
         )
     ]
@@ -256,7 +264,7 @@ viewInput x y model =
     [ div [ css ([ position absolute, left (px x), top (px y) ] ++ border) ]
         (List.concat
             [ [ text "input" ]
-            , List.map (\i -> button [ onClick (ToggleInput i), css [ marginLeft (px 3), width (px bitSize), height (px bitSize) ] ] [ text (String.fromInt (Utils.getIndex model.input i)) ]) (List.range 0 (Array.length model.input - 1))
+            , List.map (\i -> button [ onClick (ToggleInput i), css [ marginLeft (px 3), width (px bitSize), height (px bitSize) ] ] [ text (String.fromInt (Utils.getIndexValue model.input i)) ]) (List.range 0 (Array.length model.input - 1))
             ]
         )
     ]

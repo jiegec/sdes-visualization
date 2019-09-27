@@ -1,8 +1,60 @@
-module Utils exposing (getIndex)
+module Utils exposing (..)
 
 import Array
+import Bitwise
+import Types exposing (..)
 
 
-getIndex : Array.Array Int -> Int -> Int
+getIndex : Bits -> Int -> Bit
 getIndex arr index =
-    Maybe.withDefault 0 (Array.get index arr)
+    copyBit (getRawIndex arr index)
+
+
+getRawIndex : Bits -> Int -> Bit
+getRawIndex arr index =
+    Maybe.withDefault (Input 0 "None") (Array.get index arr)
+
+
+getIndexValue : Bits -> Int -> Int
+getIndexValue arr index =
+    bitValue (getIndex arr index)
+
+
+copyBit bit =
+    case bit of
+        Input data id ->
+            Calculated data [ Input data id ]
+
+        _ ->
+            bit
+
+
+bitValue bit =
+    case bit of
+        Input data _ ->
+            data
+
+        Calculated data _ ->
+            data
+
+
+getDepend bit =
+    case bit of
+        Input _ _ ->
+            [ bit ]
+
+        Calculated _ depend ->
+            depend
+
+
+xorBit bit1 bit2 =
+    Calculated (Bitwise.xor (bitValue bit1) (bitValue bit2)) (List.append (getDepend bit1) (getDepend bit2))
+
+
+invertInput bit =
+    case bit of
+        Input data id ->
+            Input (1 - data) id
+
+        Calculated _ depend ->
+            Input 0 "None"
