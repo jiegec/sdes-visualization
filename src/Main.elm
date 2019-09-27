@@ -30,7 +30,7 @@ type alias Model =
 
 init : Model
 init =
-    { key = Array.fromList [ Input 0 "key9", Input 1 "key8", Input 1 "key7", Input 1 "key6", Input 1 "key5", Input 1 "key4", Input 1 "key1", Input 1 "key0", Input 0 "key1", Input 1 "key0" ]
+    { key = Array.fromList [ Input 0 "key9", Input 1 "key8", Input 1 "key7", Input 1 "key6", Input 1 "key5", Input 1 "key4", Input 1 "key3", Input 1 "key2", Input 0 "key1", Input 1 "key0" ]
     , input = Array.fromList [ Input 1 "input7", Input 0 "input6", Input 1 "input5", Input 0 "input4", Input 0 "input3", Input 0 "input2", Input 1 "input1", Input 0 "input0" ]
     , currentHighlight = "None"
     }
