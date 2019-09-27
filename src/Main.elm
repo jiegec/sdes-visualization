@@ -133,7 +133,7 @@ view model =
             Boxes.s0 (Array.slice 0 4 input_xor_3)
 
         input_s1_2 =
-            Boxes.s0 (Array.slice 4 8 input_xor_3)
+            Boxes.s1 (Array.slice 4 8 input_xor_3)
 
         input_p4_2 =
             Boxes.p4 (Array.append input_s0_2 input_s1_2)
@@ -148,7 +148,6 @@ view model =
         (List.concat
             [ viewKey 0 0 model
             , viewInput 600 0 model
-            , viewCipherText 500 1500 input_ip1
             , viewP10 0 50 model.key key_p10
             , viewLS1 0 160 (Array.slice 0 5 key_p10) key_ls1_1
             , viewLS1 200 160 (Array.slice 5 10 key_p10) key_ls1_2
@@ -156,13 +155,21 @@ view model =
             , viewLS2 0 400 key_ls1_1 key_ls2_1
             , viewLS2 200 400 key_ls1_2 key_ls2_2
             , viewP8 0 530 (Array.append key_ls2_1 key_ls2_2) key_p8_2
-            , viewIP 600 100 model.input input_ip
-            , viewEP 700 250 input_r4_1 input_ep
-            , viewXor 700 370 input_ep key_p8_1 input_xor_1
-            , viewS0 700 730 (Array.slice 0 4 input_xor_1) input_s0_1
-            , viewS1 880 730 (Array.slice 4 8 input_xor_1) input_s1_1
-            , viewP4 780 850 (Array.append input_s0_1 input_s1_1) input_p4_1
-            , viewXor 750 970 input_p4_1 input_l4_1 input_xor_2
+            , viewIP 600 60 model.input input_ip
+            , viewEP 700 180 input_r4_1 input_ep
+            , viewXor 700 290 input_ep key_p8_1 input_xor_1
+            , viewS0 700 660 (Array.slice 0 4 input_xor_1) input_s0_1
+            , viewS1 880 660 (Array.slice 4 8 input_xor_1) input_s1_1
+            , viewP4 780 780 (Array.append input_s0_1 input_s1_1) input_p4_1
+            , viewXor 750 910 input_p4_1 input_l4_1 input_xor_2
+            , viewEP 700 1150 input_l4_2 input_ep_2
+            , viewXor 700 1260 input_ep_2 key_p8_2 input_xor_3
+            , viewS0 700 1630 (Array.slice 0 4 input_xor_3) input_s0_2
+            , viewS1 880 1630 (Array.slice 4 8 input_xor_3) input_s1_2
+            , viewP4 800 1750 (Array.append input_s0_2 input_s1_2) input_p4_2
+            , viewXor 750 1900 input_p4_2 input_r4_2 input_xor_4
+            , viewIP1 750 2150 (Array.append input_xor_4 input_l4_2) input_ip1
+            , viewCipherText 500 2300 input_ip1
             ]
         )
 
@@ -283,6 +290,10 @@ viewLS2 x y =
 
 viewIP x y =
     viewBox x y "IP"
+
+
+viewIP1 x y =
+    viewBox x y "IP-1"
 
 
 viewEP x y =
