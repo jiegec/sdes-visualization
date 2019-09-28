@@ -149,13 +149,13 @@ view model =
         (List.concat
             [ viewKey 0 0 model
             , viewInput 600 0 model
-            , viewP10 0 50 model.key key_p10 model
-            , viewLS1 0 160 (Array.slice 0 5 key_p10) key_ls1_1 model
-            , viewLS1 200 160 (Array.slice 5 10 key_p10) key_ls1_2 model
-            , viewP8 0 280 (Array.append key_ls1_1 key_ls1_2) key_p8_1 model
-            , viewLS2 0 400 key_ls1_1 key_ls2_1 model
-            , viewLS2 200 400 key_ls1_2 key_ls2_2 model
-            , viewP8 0 530 (Array.append key_ls2_1 key_ls2_2) key_p8_2 model
+            , viewP10 0 80 model.key key_p10 model
+            , viewLS1 0 230 (Array.slice 0 5 key_p10) key_ls1_1 model
+            , viewLS1 200 230 (Array.slice 5 10 key_p10) key_ls1_2 model
+            , viewP8 0 380 (Array.append key_ls1_1 key_ls1_2) key_p8_1 model
+            , viewLS2 0 600 key_ls1_1 key_ls2_1 model
+            , viewLS2 200 600 key_ls1_2 key_ls2_2 model
+            , viewP8 0 1430 (Array.append key_ls2_1 key_ls2_2) key_p8_2 model
             , viewIP 600 60 model.input input_ip model
             , viewEP 700 180 input_r4_1 input_ep model
             , viewXor 700 290 input_ep key_p8_1 input_xor_1 model
