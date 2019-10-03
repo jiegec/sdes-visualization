@@ -145,34 +145,37 @@ view model =
         input_ip1 =
             Boxes.ip1 (Array.append input_xor_4 input_l4_2)
     in
-    div [ css [ position relative ] ]
-        (List.concat
-            [ viewKey 0 0 model
-            , viewInput 600 0 model
-            , viewP10 0 80 model.key key_p10 model
-            , viewLS1 0 230 (Array.slice 0 5 key_p10) key_ls1_1 model
-            , viewLS1 200 230 (Array.slice 5 10 key_p10) key_ls1_2 model
-            , viewP8 0 380 (Array.append key_ls1_1 key_ls1_2) key_p8_1 model
-            , viewLS2 0 600 key_ls1_1 key_ls2_1 model
-            , viewLS2 200 600 key_ls1_2 key_ls2_2 model
-            , viewP8 0 1430 (Array.append key_ls2_1 key_ls2_2) key_p8_2 model
-            , viewIP 600 60 model.input input_ip model
-            , viewEP 700 180 input_r4_1 input_ep model
-            , viewXor 700 290 input_ep key_p8_1 input_xor_1 model
-            , viewS0 700 680 (Array.slice 0 4 input_xor_1) input_s0_1 model
-            , viewS1 880 680 (Array.slice 4 8 input_xor_1) input_s1_1 model
-            , viewP4 780 780 (Array.append input_s0_1 input_s1_1) input_p4_1 model
-            , viewXor 750 910 input_p4_1 input_l4_1 input_xor_2 model
-            , viewEP 700 1150 input_l4_2 input_ep_2 model
-            , viewXor 700 1260 input_ep_2 key_p8_2 input_xor_3 model
-            , viewS0 700 1650 (Array.slice 0 4 input_xor_3) input_s0_2 model
-            , viewS1 880 1650 (Array.slice 4 8 input_xor_3) input_s1_2 model
-            , viewP4 800 1750 (Array.append input_s0_2 input_s1_2) input_p4_2 model
-            , viewXor 750 1900 input_p4_2 input_r4_2 input_xor_4 model
-            , viewIP1 750 2150 (Array.append input_xor_4 input_l4_2) input_ip1 model
-            , viewCipherText 500 2300 input_ip1 model
-            ]
-        )
+    div []
+        [ h1 [] [ text "S-DES Visualization" ]
+        , div [ css [ position relative ] ]
+            (List.concat
+                [ viewKey 0 0 model
+                , viewInput 600 0 model
+                , viewP10 0 80 model.key key_p10 model
+                , viewLS1 0 230 (Array.slice 0 5 key_p10) key_ls1_1 model
+                , viewLS1 200 230 (Array.slice 5 10 key_p10) key_ls1_2 model
+                , viewP8 0 380 (Array.append key_ls1_1 key_ls1_2) key_p8_1 model
+                , viewLS2 0 600 key_ls1_1 key_ls2_1 model
+                , viewLS2 200 600 key_ls1_2 key_ls2_2 model
+                , viewP8 0 1430 (Array.append key_ls2_1 key_ls2_2) key_p8_2 model
+                , viewIP 600 60 model.input input_ip model
+                , viewEP 700 180 input_r4_1 input_ep model
+                , viewXor 700 290 input_ep key_p8_1 input_xor_1 model
+                , viewS0 700 680 (Array.slice 0 4 input_xor_1) input_s0_1 model
+                , viewS1 880 680 (Array.slice 4 8 input_xor_1) input_s1_1 model
+                , viewP4 780 780 (Array.append input_s0_1 input_s1_1) input_p4_1 model
+                , viewXor 750 910 input_p4_1 input_l4_1 input_xor_2 model
+                , viewEP 700 1150 input_l4_2 input_ep_2 model
+                , viewXor 700 1260 input_ep_2 key_p8_2 input_xor_3 model
+                , viewS0 700 1650 (Array.slice 0 4 input_xor_3) input_s0_2 model
+                , viewS1 880 1650 (Array.slice 4 8 input_xor_3) input_s1_2 model
+                , viewP4 800 1750 (Array.append input_s0_2 input_s1_2) input_p4_2 model
+                , viewXor 750 1900 input_p4_2 input_r4_2 input_xor_4 model
+                , viewIP1 750 2150 (Array.append input_xor_4 input_l4_2) input_ip1 model
+                , viewCipherText 500 2300 input_ip1 model
+                ]
+            )
+        ]
 
 
 bitSize =
